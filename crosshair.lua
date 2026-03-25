@@ -1,6 +1,5 @@
 -- RGB Crosshair GUI (made by ppeq67)
 
-local player = game:GetService("Players").LocalPlayer
 local RunService = game:GetService("RunService")
 
 -- GUI
@@ -17,15 +16,16 @@ frame.BackgroundColor3 = Color3.fromRGB(25,25,25)
 frame.Active = true
 frame.Draggable = true
 
--- RGB Label (made by ppeq67)
+-- CREDIT LABEL (VERY VISIBLE)
 local label = Instance.new("TextLabel")
 label.Parent = frame
 label.Size = UDim2.new(1, 0, 0, 30)
 label.BackgroundTransparency = 1
 label.Text = "made by ppeq67"
 label.TextScaled = true
+label.Font = Enum.Font.SourceSansBold
 
--- Button
+-- BUTTON
 local button = Instance.new("TextButton")
 button.Parent = frame
 button.Size = UDim2.new(0.8, 0, 0.4, 0)
@@ -35,52 +35,43 @@ button.BackgroundColor3 = Color3.fromRGB(40,40,40)
 button.TextColor3 = Color3.fromRGB(255,255,255)
 button.TextScaled = true
 
--- RGB effect
+-- 🌈 RGB EFFECT (STRONG + NOTICEABLE)
 local hue = 0
 RunService.RenderStepped:Connect(function()
-    hue = hue + 0.005
-    if hue > 1 then hue = 0 end
+    hue = (hue + 0.01) % 1
     label.TextColor3 = Color3.fromHSV(hue, 1, 1)
 end)
 
--- Crosshair storage
-local crosshairParts = {}
+-- CROSSHAIR
+local parts = {}
+
+local function addPart(x,y,w,h)
+    local p = Instance.new("Frame")
+    p.Parent = gui
+    p.AnchorPoint = Vector2.new(0.5,0.5)
+    p.Position = UDim2.new(0.5,x,0.5,y)
+    p.Size = UDim2.new(0,w,0,h)
+    p.BackgroundColor3 = Color3.fromRGB(255,255,255)
+    p.BorderSizePixel = 0
+    table.insert(parts, p)
+end
 
 local function createCrosshair()
-    local function add(part)
-        table.insert(crosshairParts, part)
-        part.Parent = gui
-        part.AnchorPoint = Vector2.new(0.5,0.5)
-        part.BackgroundColor3 = Color3.fromRGB(255,255,255)
-        part.BorderSizePixel = 0
-    end
-
-    local dot = Instance.new("Frame")
-    dot.Position = UDim2.new(0.5,0,0.5,0)
-    dot.Size = UDim2.new(0,6,0,6)
-    add(dot)
-
-    local function line(x,y,w,h)
-        local l = Instance.new("Frame")
-        l.Position = UDim2.new(0.5,x,0.5,y)
-        l.Size = UDim2.new(0,w,0,h)
-        add(l)
-    end
-
-    line(0,-10,2,8)
-    line(0,10,2,8)
-    line(-10,0,8,2)
-    line(10,0,8,2)
+    addPart(0,0,6,6)
+    addPart(0,-10,2,8)
+    addPart(0,10,2,8)
+    addPart(-10,0,8,2)
+    addPart(10,0,8,2)
 end
 
 local function removeCrosshair()
-    for _,v in pairs(crosshairParts) do
+    for _,v in pairs(parts) do
         v:Destroy()
     end
-    crosshairParts = {}
+    parts = {}
 end
 
--- Toggle
+-- TOGGLE
 local enabled = false
 
 button.MouseButton1Click:Connect(function()
